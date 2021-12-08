@@ -13,16 +13,25 @@ const milDecElement = document.getElementById('milDec');
 const milUniElement = document.getElementById('milUni');
 const splitsElement = document.getElementById('splits');
 
+let intervalId = null;
+
 function printTime() {
-  // ... your code goes here
+  intervalId = setInterval(() => {
+    printMinutes();
+    printSeconds();
+  }, 1000);
 }
 
 function printMinutes() {
-  // ... your code goes here
+  const minutes = chronometer.computeTwoDigitNumber(chronometer.getMinutes());
+  minDecElement.textContent = minutes[0];
+  minUniElement.textContent = minutes[1];
 }
 
 function printSeconds() {
-  // ... your code goes here
+  let seconds = chronometer.computeTwoDigitNumber(chronometer.getSeconds());
+  secDecElement.textContent = seconds[0];
+  secUniElement.textContent = seconds[1];
 }
 
 // ==> BONUS
@@ -31,35 +40,72 @@ function printMilliseconds() {
 }
 
 function printSplit() {
-  // ... your code goes here
+  return chronometer.split();
 }
 
 function clearSplits() {
-  // ... your code goes here
+  const allLis = document.querySelectorAll('li');
+  console.log(allLis)
+  for (let i=0; i<allLis.length; i++) {
+    allLis[i].remove();
+  }
 }
 
 function setStopBtn() {
-  // ... your code goes here
+  // This changes the class of the left btn so it displays "stop"
+  btnLeftElement.classList.remove('start');
+  btnLeftElement.classList.add('stop');
+  btnLeftElement.innerHTML = 'STOP';
 }
 
 function setSplitBtn() {
-  // ... your code goes here
+  // This changes the class of the rigth btn so it displays "split"
+    btnRightElement.classList.remove('reset');
+    btnRightElement.classList.add('split');
+    btnRightElement.innerHTML = 'SPLIT';
 }
 
 function setStartBtn() {
-  // ... your code goes here
+  // This changes the class of the left btn so it displays "start"
+  btnLeftElement.classList.remove('stop');
+  btnLeftElement.classList.add('start');
+  btnLeftElement.innerHTML = 'START';
 }
 
 function setResetBtn() {
-  // ... your code goes here
+  // This changes the class of the rigth btn so it displays "reset"
+  btnRightElement.classList.remove('split');
+  btnRightElement.classList.add('reset');
+  btnRightElement.innerHTML = 'RESET';
 }
 
 // Start/Stop Button
 btnLeftElement.addEventListener('click', () => {
-  // ... your code goes here
+  // this condition changes the behaviour of the button from start to stop or vice versa
+  if(btnLeftElement.classList.contains('stop')) {
+    setStartBtn();
+    setResetBtn();
+    chronometer.stop();
+    clearInterval(intervalId);
+  } else if(btnLeftElement.classList.contains('start')) {
+    setStopBtn();
+    setSplitBtn();
+    chronometer.start();
+    printTime();
+  }
 });
 
 // Reset/Split Button
 btnRightElement.addEventListener('click', () => {
-  // ... your code goes here
+  // this condition changes the behaviour from reset to split or vice versa
+  if (btnRightElement.classList.contains('split')) {
+    const newLI = document.createElement("li");
+    newLI.textContent = printSplit();
+    splitsElement.appendChild(newLI);
+  } else if(btnRightElement.classList.contains('reset')) {
+    chronometer.reset();
+    printMinutes();
+    printSeconds();
+    clearSplits();
+  }
 });
